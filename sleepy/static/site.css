@@ -1,0 +1,19 @@
+body { font-size: 16px; }
+.form-control.form-control-inline{
+    display: inline;
+    width: inherit;
+    font-size: 16px;
+}
+.container-narrow { width: 70%; }
+.code-panel pre{ margin: 0px 0px; }
+.code-panel .panel-body { padding: 0px; }
+pre { font-size: 15px; }
+.string { color: #800; }
+.number { color: #080; }
+.boolean { color: #080; }
+.null { color: #666666; }
+.key { color: #4070a0; }
+.code {
+    font-size: 15px;
+    font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Inventory API: {{orm}}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap.min.css')}}">
+        <link rel="stylesheet" href="{{url_for('static', filename='site.css')}}">
+    </head>
+    <body>
+        <div class="container container-narrow">
+            <h1 class="page-title text-center">Inventory API</h1>
+            <p>Currently running on: <span class="text-success">{{orm}}</span></p>
+            <div class="row">
+                <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Request</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <h1>
+                            <code>
+                                /api/v1/<span><select name="resource" id="resource" class="form-control form-control-inline">
+                                            <option>people</option>
+                                            <option>items</option>
+                                            <option>recentcheckouts</option>
+                                        </select>
+                                        </span>
+                                        /
+                                        <span><input id="primaryKey" class="form-control form-control-inline" type="text"></span>
+                            </code>
+                        </h1>
+
+                        <div id="personParams" class="code">
+                            <p>
+                                {"firstname":
+                                <input placeholder="null" name="firstname" class="form-control form-control-inline" type="text">,
+                                "lastname":
+                                <input placeholder="null" name="lastname" class="form-control form-control-inline" type="text">}
+                            </p>
+                        </div>
+
+                        <div id="itemParams" style="display: none;" class="code">
+                            <p>
+                                {"name":
+                                <input placeholder="null" name="name" class="form-control form-control-inline" type="text">,
+                                "person_id":
+                                <input placeholder="null" name="person_id" class="form-control form-control-inline" type="text">
+                                "checked_out":
+                                <select placeholder="null" name="checked_out" class="form-control form-control-inline">
+                                    <option>false</option>
+                                    <option>true</option>
+                                </select>
+                                }
+                            </p>
+                        </div>
+
+                        <button onclick="Request.get()" class="btn btn-lg btn-success" autofocus=true>GET</button>
+                        <button onclick="Request.post()" class="btn btn-lg btn-warning">POST</button>
+                        <button onclick="Request.put()" class="btn btn-lg btn-info">PUT</button>
+                        <button onclick="Request.delete()" class="btn btn-lg btn-danger">DELETE</button>
+                    </div><!-- end panel-body-->
+
+                </div><!-- end panel -->
+                </div><!-- end col -->
+            </div><!--end row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-info code-panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Response</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="response">
+                                <pre><code class="json"></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+
+        <script src="{{ url_for('static', filename='vendor/jquery-1.10.2.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='site.js')}}"></script>
+
+    </body>
+</html>
