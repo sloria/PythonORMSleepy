@@ -72,7 +72,7 @@ class ItemsView(FlaskView):
         if not name:
             abort(400)
         person = Person.query.filter_by(id=data.get("person_id", None)).first()
-        item = Item(name=data['name'], person=person)
+        item = Item(name=name, person=person)
         db.session.add(item)
         db.session.commit()
         return jsonify({"message": "Successfully added new item",

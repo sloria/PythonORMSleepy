@@ -118,13 +118,13 @@ class ItemsView(FlaskView):
         item.name = request.json.get("name", item.name)
         item.checked_out = request.json.get("checked_out", item.checked_out)
         if request.json.get("person_id"):
-            # remove the item from its person's items list and add it to the
-            # new person's items list
-            old_person = get_item_person(item)
-            old_person.items.remove(item)
-            old_person.save()
             person = Person.objects(id=str(request.json['person_id'])).first()
             if person:
+                # remove the item from its person's items list and add it to the
+                # new person's items list
+                old_person = get_item_person(item)
+                old_person.items.remove(item)
+                old_person.save()
                 person.items.append(item)
             person.save()
         item.updated = datetime.utcnow()
@@ -139,7 +139,7 @@ class PeopleView(FlaskView):
     def index(self):
         '''Get all people, ordered by creation date.'''
         all_people = Person.objects.order_by("-created")
-        people_data = [p._data for p in all_people]
+        people_data = [p._data for p in all_people]  # Data for serializer
         data = PersonDocSerializer(people_data).data
         return jsonify({"people": data})
 
@@ -147,7 +147,7 @@ class PeopleView(FlaskView):
         '''Get a person.'''
         try:
             person = Person.objects.get_or_404(id=str(id))
-        except mdb.ValidationError:
+        except mdb.ValidationError:  # Invalid ID
             abort(404)
         return jsonify(PersonDocSerializer(person._data).data)
 

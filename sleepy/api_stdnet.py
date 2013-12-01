@@ -51,7 +51,7 @@ class ItemsView(FlaskView):
 
     def index(self):
         '''Get all items.'''
-        all_items = list(models.item.query().sort_by("-updated").all())
+        all_items = models.item.query().sort_by("-updated").all()
         data = ItemSerializer(all_items).data
         return jsonify({"items": data})
 
@@ -76,7 +76,7 @@ class ItemsView(FlaskView):
                 person = models.person.query().get(id=person_id)
             except Person.DoesNotExist:
                 pass
-        item = models.item.new(name=data['name'], person=person)
+        item = models.item.new(name=name, person=person)
         return jsonify({"message": "Successfully added new item",
                         "item": ItemSerializer(item).data}), 201
 
