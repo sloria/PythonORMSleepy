@@ -102,8 +102,9 @@ class ItemsView(FlaskView):
 
     def put(self, id):
         '''Update an item.'''
-        item = Item.get(Item.id == id)
-        if not item:
+        try:
+            item = Item.get(Item.id == id)
+        except Item.DoesNotExist:
             abort(404)
         # Update item
         item.name = request.json.get("name", item.name)

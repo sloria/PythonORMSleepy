@@ -9,6 +9,8 @@ Each example demonstrates the syntax for declaring models as well as basic query
 
 **[SQLAlchemy](http://www.sqlalchemy.org/)** (Relational DBs)
 
+[Full Example](https://github.com/sloria/PythonORMSleepy/blob/master/sleepy/api_sqlalchemy.py)
+
 ```python
 hour_ago  = datetime.utcnow() - timedelta(hours=1)
 recent_items = Item.query.filter(Item.checked_out &
@@ -17,6 +19,8 @@ recent_items = Item.query.filter(Item.checked_out &
 ```
 
 **[Peewee](http://peewee.readthedocs.org/en/latest/)** (Relational DBs)
+
+[Full Example](https://github.com/sloria/PythonORMSleepy/blob/master/sleepy/api_peewee.py)
 
 ```python
 hour_ago  = datetime.utcnow() - timedelta(hours=1)
@@ -27,6 +31,8 @@ recent_items =Item.select().where(Item.checked_out &
 
 **[Mongoengine](http://mongoengine.org)** (MongoDB)
 
+[Full Example](https://github.com/sloria/PythonORMSleepy/blob/master/sleepy/api_mongoengine.py)
+
 ```python
 hour_ago  = datetime.utcnow() - timedelta(hours=1)
 recent_items = Item.objects(checked_out=True, updated__gt=hour_ago)\
@@ -34,6 +40,8 @@ recent_items = Item.objects(checked_out=True, updated__gt=hour_ago)\
 ```
 
 **[Stdnet](http://pythonhosted.org/python-stdnet/index.html)** (Redis)
+
+[Full Example](https://github.com/sloria/PythonORMSleepy/blob/master/sleepy/api_stdnet.py)
 
 ```python
 hour_ago  = datetime.utcnow() - timedelta(hours=1)
