@@ -1,6 +1,6 @@
-# Sleepy OxM 
+# Python ORM/ODM Examples, For The Sleepy
 
-The same [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer#RESTful_web_APIs) (an inventory app), implemented using different ORM/ODMs, i.e. a sort of "Hello World" tour of Python data mapper libraries.
+The same RESTful API (an inventory app), implemented using different ORM/ODMs, i.e. a sort of "Hello World" tour of Python data mapper libraries.
 
 Each example demonstrates the syntax for declaring models as well as basic querying, inserting, updating, and deleting of records.
 
@@ -40,6 +40,8 @@ hour_ago  = datetime.utcnow() - timedelta(hours=1)
 recent_items = models.item.filter(checked_out=True, updated__gt=hour_ago)\
                                 .sort_by("-updated").all()
 ```
+
+. . . and more to come.
 
 Each of these was put to REST by [Flask](http://flask.pocoo.org), [Flask-Classy](http://pythonhosted.org/Flask-Classy/), and [marshmallow](http://marshmallow.readthedocs.org).
 
