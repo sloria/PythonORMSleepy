@@ -26,3 +26,7 @@ pymongo==2.6.3
 mongoengine==0.8.4
 flask-mongoengine==0.7.0
 
+# StdNet
+redis==2.8.0
+python-stdnet==0.8.2
+

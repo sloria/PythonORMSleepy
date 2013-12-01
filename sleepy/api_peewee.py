@@ -35,6 +35,10 @@ class Person(BaseModel):
     lastname = pw.CharField(max_length=80, null=False)
     created = pw.DateTimeField(default=datetime.utcnow)
 
+    @property
+    def n_items(self):
+        return self.items.count()
+
     def __repr__(self):
         return "<Person '{0} {1}'>".format(self.firstname, self.lastname)
 
@@ -119,7 +123,8 @@ class PeopleView(FlaskView):
 
     def index(self):
         '''Get all people, ordered by creation date.'''
-        all_people = Person.select().order_by(Person.created.desc()).execute()
+        query = Person.select().order_by(Person.created.desc())
+        all_people = [person for person in query]  # Evaluates query
         data = PersonSerializer(all_people, exclude=('created',)).data
         return jsonify({"people": data})
 

@@ -33,6 +33,13 @@ recent_items = Item.objects(checked_out=True, updated__gt=hour_ago)\
                             .order_by("-updated")
 ```
 
+**[Stdnet](http://pythonhosted.org/python-stdnet/index.html)** (Redis)
+
+```python
+hour_ago  = datetime.utcnow() - timedelta(hours=1)
+recent_items = models.item.filter(checked_out=True, updated__gt=hour_ago)\
+                                .sort_by("-updated").all()
+```
 
 Each of these was put to REST by [Flask](http://flask.pocoo.org), [Flask-Classy](http://pythonhosted.org/Flask-Classy/), and [marshmallow](http://marshmallow.readthedocs.org).
 
