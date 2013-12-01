@@ -62,6 +62,7 @@ class TestMongoengineAPI(TestCase):
         assert_equal(res.status_code, 200)
         assert_equal(res.json['name'], "{0}, {1}".format(self.person.lastname,
                                                         self.person.firstname))
+        assert_equal(res.json['n_items'], 1)
 
     def test_get_nonexistent_person(self):
         res = self.client.get("/api/v1/people/10")
@@ -115,6 +116,13 @@ class TestMongoengineAPI(TestCase):
         assert_true(item.checked_out)
         item_person = get_item_person(item)
         assert_equal(item_person, self.person2)
+
+    def test_delete_person(self):
+        all_persons = Person.objects
+        assert_in(self.person, all_persons)
+        self.client.delete('/api/v1/people/{0}'.format(self.person.id))
+        all_persons = Person.objects
+        assert_not_in(self.person, all_persons)
 
     def test_recent(self):
         self.item.checked_out = True

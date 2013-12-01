@@ -1,36 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import unittest
+import time
 from nose.tools import *  # PEP8 asserts
 from flask.ext.testing import TestCase
-
 from flask import json
-from sleepy.api_sqlalchemy import Person, Item, db, app
+from stdnet import odm
+
+from sleepy.api_stdnet import app, register_models
 from sleepy.serializers import ItemSerializer
 
+models = odm.Router('redis://localhost:6379')
 
-class TestSQLAlchemyAPI(TestCase):
+
+class TestStdnetAPI(TestCase):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
     def create_app(self):
         app.config.from_object(self)
+        register_models(models)
         return app
 
     def setUp(self):
-        db.create_all()
         # create some items
-        self.person = Person(firstname="Steve", lastname="Loria")
-        self.person2 = Person(firstname="Monty", lastname="Python")
-        self.item = Item(name="Foo", person=self.person)
-        self.item2 = Item(name="Bar")
-        db.session.add_all([self.person, self.person2, self.item, self.item2])
-        db.session.commit()
+        self.person = models.person.new(firstname="Steve", lastname="Loria")
+        self.person2 = models.person.new(firstname="Monty", lastname="Python")
+        self.item = models.item.new(name="Foo", person=self.person)
+        self.item.save()
+        self.person.save()
+        self.item2 = models.item.new(name="Bar")
+        self.person2.save()
+        self.item2.save()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        models.flush()
 
     def test_get_items(self):
         url = "/api/v1/items/"
@@ -48,12 +52,15 @@ class TestSQLAlchemyAPI(TestCase):
         assert_equal(data['name'], self.item.name)
         assert_equal(data['person']['id'], self.person.id)
 
+    def test_get_nonexistent_item(self):
+        url = '/api/v1/items/{0}'.format("abc")
+        res = self.client.get(url)
+        assert_equal(res.status_code, 404)
+
     def test_get_persons(self):
         res = self.client.get('/api/v1/people/')
         assert_equal(res.status_code, 200)
-        assert_equal(len(res.json['people']), 2)
-        assert_equal(res.json['people'][0]['name'],
-                    "{0}, {1}".format(self.person2.lastname, self.person2.firstname))
+        assert_equal(len(res.json['people']), models.person.query().count())
 
     def test_get_person(self):
         res = self.client.get('/api/v1/people/{0}'.format(self.person.id))
@@ -80,49 +87,52 @@ class TestSQLAlchemyAPI(TestCase):
     def test_post_item(self):
         res = self._post_json("/api/v1/items/", {"name": "Ipad"})
         assert_equal(res.status_code, 201)
-        item = Item.query.all()[-1]
+        item = models.item.query().sort_by("-updated")[0]
         assert_true(item is not None)
         assert_equal(item.name, "Ipad")
 
     def test_post_item_with_person_id(self):
         res = self._post_json('/api/v1/items/',
-                              {"name": "Ipod", "person_id": self.person.id})
+                              {"name": "Ipod", "person_id": str(self.person.id)})
         assert_equal(res.status_code, 201)
-        item = Item.query.all()[-1]
+        item = models.item.query()[0]
         assert_equal(item.person, self.person)
 
     def test_post_person(self):
         res = self._post_json('/api/v1/people/',
-                            {'firstname': 'Steven', 'lastname': 'Loria'})
+                            {'firstname': 'Foo', 'lastname': 'Bar'})
         assert_equal(res.status_code, 201)
-        person = Person.query.all()[-1]
-        assert_equal(person.firstname, "Steven")
-        assert_equal(person.lastname, "Loria")
+        person = models.person.query().sort_by("-created")[0]
+        assert_equal(person.firstname, "Foo")
+        assert_equal(person.lastname, "Bar")
 
     def test_delete_item(self):
-        assert_in(self.item, Item.query.all())
+        all_items = models.item.query()
+        assert_in(self.item, all_items)
         res = self.client.delete("/api/v1/items/{0}".format(self.item.id))
-        assert_not_in(self.item, Item.query.all())
+        all_items = models.item.query()
+        assert_not_in(self.item, all_items)
 
     def test_put_item(self):
         res = self._put_json("/api/v1/items/{0}".format(self.item.id),
                             {"checked_out": True,
-                            "person_id": self.person2.id})
-        assert_true(self.item.checked_out)
-        assert_equal(self.item.person, self.person2)
+                            "person_id": str(self.person2.id)})
+        item = models.item.get(id=self.item.id)
+        assert_true(item.checked_out)
+        assert_equal(item.person, self.person2)
 
     def test_delete_person(self):
-        all_persons = Person.query.all()
+        all_persons = models.person.query()
         assert_in(self.person, all_persons)
         self.client.delete('/api/v1/people/{0}'.format(self.person.id))
-        all_persons = Person.query.all()
+        all_persons = models.person.query()
         assert_not_in(self.person, all_persons)
 
     def test_recent(self):
         self.item.checked_out = True
         self.item2.checked_out = False
-        db.session.add_all([self.item, self.item2])
-        db.session.commit()
+        self.item.save()
+        self.item2.save()
         res = self.client.get("/api/v1/recentcheckouts/")
         assert_in(ItemSerializer(self.item).data, res.json['items'])
         assert_not_in(ItemSerializer(self.item2).data, res.json['items'])

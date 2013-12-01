@@ -173,13 +173,13 @@ class PeopleView(FlaskView):
 
     def delete(self, id):
         '''Delete a person.'''
-        person = Person.objects(id=id)
+        person = Person.objects.get(id=id)
         if not person:
             abort(404)
         pid = person.id
-        person.delete_instance()
+        person.delete()
         return jsonify({"message": "Successfully deleted person.",
-                        "id": pid}), 200
+                        "id": str(pid)}), 200
 
 class RecentCheckoutsView(FlaskView):
     '''Demonstrates a more complex query.'''

@@ -35,6 +35,10 @@ class Person(BaseModel):
     lastname = pw.CharField(max_length=80, null=False)
     created = pw.DateTimeField(default=datetime.utcnow)
 
+    @property
+    def n_items(self):
+        return self.items.count()
+
     def __repr__(self):
         return "<Person '{0} {1}'>".format(self.firstname, self.lastname)
 

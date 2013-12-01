@@ -60,6 +60,8 @@ class TestPeeweeAPI(TestCase):
         assert_equal(res.status_code, 200)
         assert_equal(res.json['name'], "{0}, {1}".format(self.person.lastname,
                                                         self.person.firstname))
+        assert_equal(res.json['n_items'], 1)
+
 
     def test_get_nonexistent_person(self):
         res = self.client.get("/api/v1/people/10")
@@ -111,6 +113,13 @@ class TestPeeweeAPI(TestCase):
         item = Item.get(Item.id == self.item.id)
         assert_true(item.checked_out)
         assert_equal(item.person, self.person2)
+
+    def test_delete_person(self):
+        all_persons = [p for p in Person.select()]
+        assert_in(self.person, all_persons)
+        self.client.delete('/api/v1/people/{0}'.format(self.person.id))
+        all_persons = [p for p in Person.select()]
+        assert_not_in(self.person, all_persons)
 
     def test_recent(self):
         self.item.checked_out = True
