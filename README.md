@@ -63,7 +63,3 @@ To use the browser interface, run an example and browse to `http://localhost:500
 ## License 
 
 [MIT Licensed](http://sloria.mit-license.org/).
-
-
-
-
