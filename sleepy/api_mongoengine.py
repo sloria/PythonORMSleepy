@@ -80,10 +80,8 @@ class ItemsView(FlaskView):
     def get(self, id):
         '''Get an item.'''
         try:
-            item = Item.objects.get(id=id)
+            item = Item.objects.get_or_404(id=id)
         except mdb.ValidationError:  # Invalid ID
-            abort(404)
-        if not item:
             abort(404)
         return jsonify(ItemDocSerializer(item._data).data)
 
@@ -108,18 +106,14 @@ class ItemsView(FlaskView):
 
     def delete(self, id):
         '''Delete an item.'''
-        item = Item.objects(id=id).first()
-        if not item:
-            abort(404)
+        item = Item.objects.get_or_404(id=id)
         item.delete()
         return jsonify({"message": "Successfully deleted item.",
                         "id": str(item.id)}), 200
 
     def put(self, id):
         '''Update an item.'''
-        item = Item.objects(id=id).first()
-        if not item:
-            abort(404)
+        item = Item.objects.get_or_404(id=id)
         # Update item
         item.name = request.json.get("name", item.name)
         item.checked_out = request.json.get("checked_out", item.checked_out)
@@ -152,10 +146,8 @@ class PeopleView(FlaskView):
     def get(self, id):
         '''Get a person.'''
         try:
-            person = Person.objects.get(id=str(id))
+            person = Person.objects.get_or_404(id=str(id))
         except mdb.ValidationError:
-            abort(404)
-        if not person:
             abort(404)
         return jsonify(PersonDocSerializer(person._data).data)
 
@@ -173,9 +165,7 @@ class PeopleView(FlaskView):
 
     def delete(self, id):
         '''Delete a person.'''
-        person = Person.objects.get(id=id)
-        if not person:
-            abort(404)
+        person = Person.objects.get_or_404(id=id)
         pid = person.id
         person.delete()
         return jsonify({"message": "Successfully deleted person.",
