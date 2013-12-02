@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from flask import Flask, jsonify, request, render_template, abort
 from flask.ext.classy import FlaskView
 from flask_peewee.db import Database
+from flask_peewee.utils import get_object_or_404
 import peewee as pw
 
 from serializers import ItemSerializer, PersonSerializer
@@ -59,13 +60,13 @@ class ItemsView(FlaskView):
 
     def index(self):
         '''Get all items.'''
-        query = Item.select().order_by(Item.updated.desc())
-        all_items = [item for item in query]  # Executes query
+        all_items = Item.select().order_by(Item.updated.desc())
         data = ItemSerializer(all_items).data
         return jsonify({"items": data})
 
     def get(self, id):
         '''Get an item.'''
+        # Could also use flask_peewee.utils.get_object_or_404
         try:
             item = Item.get(Item.id == id)
         except Item.DoesNotExist:
@@ -92,20 +93,14 @@ class ItemsView(FlaskView):
 
     def delete(self, id):
         '''Delete an item.'''
-        try:
-            item = Item.get(Item.id == id)
-        except Item.DoesNotExist:
-            abort(404)
+        item = get_object_or_404(Item, Item.id == id)
         item.delete_instance()
         return jsonify({"message": "Successfully deleted item.",
                         "id": item.id}), 200
 
     def put(self, id):
         '''Update an item.'''
-        try:
-            item = Item.get(Item.id == id)
-        except Item.DoesNotExist:
-            abort(404)
+        item = get_object_or_404(Item, Item.id == id)
         # Update item
         item.name = request.json.get("name", item.name)
         item.checked_out = request.json.get("checked_out", item.checked_out)
@@ -124,13 +119,13 @@ class PeopleView(FlaskView):
 
     def index(self):
         '''Get all people, ordered by creation date.'''
-        query = Person.select().order_by(Person.created.desc())
-        all_people = [person for person in query]  # Evaluates query
-        data = PersonSerializer(all_people, exclude=('created',)).data
+        all_items = Person.select().order_by(Person.created.desc())
+        data = PersonSerializer(all_items, exclude=('created',)).data
         return jsonify({"people": data})
 
     def get(self, id):
         '''Get a person.'''
+        # Could also use flask_peewee.utils.get_object_or_404
         try:
             person = Person.get(Person.id == int(id))
         except Person.DoesNotExist:
@@ -151,10 +146,7 @@ class PeopleView(FlaskView):
 
     def delete(self, id):
         '''Delete a person.'''
-        try:
-            person = Person.get(Person.id == int(id))
-        except Person.DoesNotExist:
-            abort(404)
+        person = get_object_or_404(Person, Person.id == int(id))
         pid = person.id
         person.delete_instance()
         return jsonify({"message": "Successfully deleted person.",
