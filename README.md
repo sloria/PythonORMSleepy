@@ -70,6 +70,12 @@ An interactive browser interface is included to test out the REST API.
 
 To use the browser interface, run an example and browse to `http://localhost:5000`.
 
+## "Why isn't  _____ included here?"
+
+To which I respond: Why don't you [fork](https://github.com/sloria/PythonORMSleepy/fork) this project?
+
+
+
 ## License 
 
 [MIT Licensed](http://sloria.mit-license.org/).
