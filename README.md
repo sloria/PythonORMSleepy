@@ -49,6 +49,18 @@ recent_items = models.item.filter(checked_out=True, updated__gt=hour_ago)\
                                 .sort_by("-updated").all()
 ```
 
+**[Pony](http://ponyorm.com/)** (Relational DBs)
+
+[Full Example](https://github.com/sloria/PythonORMSleepy/blob/master/sleepy/api_pony.py)
+
+```python
+hour_ago  = datetime.utcnow() - timedelta(hours=1)
+recent_items = orm.select(item for item in Item
+                                if item.checked_out and
+                                    item.updated > hour_ago)[:]
+```
+
+
 . . . and more to come.
 
 Each of these was put to REST by [Flask](http://flask.pocoo.org), [Flask-Classy](http://pythonhosted.org/Flask-Classy/), and [marshmallow](http://marshmallow.readthedocs.org).
