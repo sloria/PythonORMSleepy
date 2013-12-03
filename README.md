@@ -57,7 +57,8 @@ recent_items = models.item.filter(checked_out=True, updated__gt=hour_ago)\
 hour_ago  = datetime.utcnow() - timedelta(hours=1)
 recent_items = orm.select(item for item in Item
                                 if item.checked_out and
-                                    item.updated > hour_ago)[:]
+                                    item.updated > hour_ago)\
+                                    .order_by(Item.updated.desc())[:]
 ```
 
 
