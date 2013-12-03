@@ -89,9 +89,10 @@ class ItemsView(FlaskView):
         '''Insert a new item.'''
         data = request.json
         name = data.get("name", None)
+        checked_out = data.get("checked_out", False)
         if not name:
             abort(400)
-        item = Item(name=name)
+        item = Item(name=name, checked_out=checked_out)
         item.save()
         person_id = data.get("person_id")
         if person_id:

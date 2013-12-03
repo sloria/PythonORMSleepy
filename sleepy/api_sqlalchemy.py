@@ -69,10 +69,11 @@ class ItemsView(FlaskView):
         '''Insert a new item.'''
         data = request.json
         name = data.get("name", None)
+        checked_out = data.get("checked_out", False)
         if not name:
             abort(400)
         person = Person.query.filter_by(id=data.get("person_id", None)).first()
-        item = Item(name=name, person=person)
+        item = Item(name=name, person=person, checked_out=checked_out)
         db.session.add(item)
         db.session.commit()
         return jsonify({"message": "Successfully added new item",

@@ -87,11 +87,12 @@ class TestPonyAPI(TestCase):
                                 content_type='application/json')
     @db_session
     def test_post_item(self):
-        res = self._post_json("/api/v1/items/", {"name": "Ipad"})
+        res = self._post_json("/api/v1/items/", {"name": "Ipad", 'checked_out': True})
         assert_equal(res.status_code, 201)
         item = list(Item.select())[-1]
         assert_true(item is not None)
         assert_equal(item.name, "Ipad")
+        assert_true(item.checked_out)
 
     @db_session
     def test_post_item_with_person_id(self):

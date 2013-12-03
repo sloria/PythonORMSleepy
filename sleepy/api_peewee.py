@@ -77,6 +77,7 @@ class ItemsView(FlaskView):
         '''Insert a new item.'''
         data = request.json
         name = data.get("name", None)
+        checked_out = data.get('checked_out', False)
         if not name:
             abort(400)  # Must specify name
         person_id = data.get("person_id")
@@ -87,7 +88,7 @@ class ItemsView(FlaskView):
                 person = None
         else:
             person = None
-        item = Item.create(name=name, person=person)
+        item = Item.create(name=name, person=person, checked_out=checked_out)
         return jsonify({"message": "Successfully added new item",
                         "item": ItemSerializer(item).data}), 201
 

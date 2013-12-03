@@ -69,6 +69,7 @@ class ItemsView(FlaskView):
         name = data.get("name", None)
         person_id = data.get("person_id")
         person = None
+        checked_out = data.get("checked_out", False)
         if not name:
             abort(400)
         if person_id:
@@ -76,7 +77,7 @@ class ItemsView(FlaskView):
                 person = models.person.query().get(id=person_id)
             except Person.DoesNotExist:
                 pass
-        item = models.item.new(name=name, person=person)
+        item = models.item.new(name=name, person=person, checked_out=checked_out)
         return jsonify({"message": "Successfully added new item",
                         "item": ItemSerializer(item).data}), 201
 

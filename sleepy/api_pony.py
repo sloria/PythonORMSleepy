@@ -73,6 +73,7 @@ class ItemsView(FlaskView):
         '''Insert a new item.'''
         data = request.json
         name = data.get("name", None)
+        checked_out = data.get('checked_out', False)
         if not name:
             abort(400)
         pid = data.get("person_id")
@@ -80,7 +81,7 @@ class ItemsView(FlaskView):
             person = Person.get(id=pid)  # None if not found
         else:
             person = None
-        item = Item(name=name, person=person)
+        item = Item(name=name, person=person, checked_out=checked_out)
         orm.commit()
         return jsonify({"message": "Successfully added new item",
                         "item": ItemSerializer(item).data}), 201
@@ -165,7 +166,8 @@ class RecentCheckoutsView(FlaskView):
         hour_ago  = datetime.utcnow() - timedelta(hours=1)
         recent = orm.select(item for item in Item
                                 if item.checked_out and
-                                    item.updated > hour_ago)[:]
+                                    item.updated > hour_ago)\
+                                    .order_by(Item.updated.desc())[:]
         return jsonify({"items": ItemSerializer(recent).data})
 
 @app.route("/")

@@ -79,11 +79,12 @@ class TestMongoengineAPI(TestCase):
                                 content_type='application/json')
 
     def test_post_item(self):
-        res = self._post_json("/api/v1/items/", {"name": "Ipad"})
+        res = self._post_json("/api/v1/items/", {"name": "Ipad", 'checked_out': True})
         assert_equal(res.status_code, 201)
         item = Item.objects.order_by("-updated").first()
         assert_true(item is not None)
         assert_equal(item.name, "Ipad")
+        assert_true(item.checked_out)
 
     def test_post_item_with_person_id(self):
         res = self._post_json('/api/v1/items/',
