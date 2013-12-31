@@ -57,7 +57,7 @@ class ItemsView(FlaskView):
     def index(self):
         '''Get all items.'''
         all_items = Item.query.order_by(Item.updated.desc()).all()
-        data = ItemSerializer(all_items).data
+        data = ItemSerializer(all_items, many=True).data
         return jsonify({"items": data})
 
     def get(self, id):
@@ -110,7 +110,7 @@ class PeopleView(FlaskView):
     def index(self):
         '''Get all people, ordered by creation date.'''
         all_people = Person.query.order_by(Person.created.desc()).all()
-        data = PersonSerializer(all_people, exclude=('created',)).data
+        data = PersonSerializer(all_people, exclude=('created',), many=True).data
         return jsonify({"people": data})
 
     def get(self, id):
@@ -149,7 +149,7 @@ class RecentCheckoutsView(FlaskView):
         recent = Item.query.filter(Item.checked_out &
                                     (Item.updated > hour_ago)) \
                                     .order_by(Item.updated.desc()).all()
-        return jsonify({"items": ItemSerializer(recent).data})
+        return jsonify({"items": ItemSerializer(recent, many=True).data})
 
 @app.route("/")
 def home():

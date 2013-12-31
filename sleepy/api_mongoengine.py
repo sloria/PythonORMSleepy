@@ -74,7 +74,7 @@ class ItemsView(FlaskView):
         all_items = Item.objects.order_by("-updated")
         # Serializer takes data dict for each item
         item_data = [item._data for item in all_items]
-        data = ItemDocSerializer(item_data).data
+        data = ItemDocSerializer(item_data, many=True).data
         return jsonify({"items": data})
 
     def get(self, id):
@@ -141,7 +141,7 @@ class PeopleView(FlaskView):
         '''Get all people, ordered by creation date.'''
         all_people = Person.objects.order_by("-created")
         people_data = [p._data for p in all_people]  # Data for serializer
-        data = PersonDocSerializer(people_data).data
+        data = PersonDocSerializer(people_data, many=True).data
         return jsonify({"people": data})
 
     def get(self, id):
@@ -183,7 +183,7 @@ class RecentCheckoutsView(FlaskView):
         recent = Item.objects(checked_out=True, updated__gt=hour_ago)\
                                 .order_by("-updated")
         recent_data = [i._data for i in recent]
-        serialized = ItemDocSerializer(recent_data)
+        serialized = ItemDocSerializer(recent_data, many=True)
         return jsonify({"items": serialized.data})
 
 @app.route("/")
