@@ -1,5 +1,4 @@
 (function() {
-var HOST = "http://localhost:5000";
 var API_PREFIX = "/api/v1/";
 var $resource = $("select[name='resource']");
 
@@ -7,7 +6,7 @@ var $resource = $("select[name='resource']");
 var getUrl = function() {
     var resource = $resource.val();
     var pk = $("#primaryKey").val();
-    var url = HOST + API_PREFIX + resource + "/";
+    var url = API_PREFIX + resource + "/";
     if (pk) {
         url +=  pk;
     };
